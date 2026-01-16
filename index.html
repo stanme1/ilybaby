@@ -187,19 +187,26 @@
             }, 300);
         }
 
-        function moveButton(button) {
-            // Get viewport dimensions
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            
-            // Calculate new random position within viewport bounds
-            const newX = Math.random() * (viewportWidth - 50); // 150px buffer for button width
-            const newY = Math.random() * (viewportHeight - 50);  // 50px buffer for button height
-            
-            button.style.position = 'fixed'; // Change to fixed positioning
-            button.style.left = newX + 'px';
-            button.style.top = newY + 'px';
-        }
+function moveButton(button) {
+    const maxDX = 80; // horizontal max distance (adjust smaller for closer moves)
+    const maxDY = 60; // vertical max distance
+
+    const rect = button.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // random offset around current position, constrained by maxDX/maxDY
+    let newX = rect.left + (Math.random() * 2 - 1) * maxDX;
+    let newY = rect.top  + (Math.random() * 2 - 1) * maxDY;
+
+    // clamp so the button stays inside viewport
+    newX = Math.max(0, Math.min(newX, viewportWidth - rect.width));
+    newY = Math.max(0, Math.min(newY, viewportHeight - rect.height));
+
+    button.style.position = 'fixed';
+    button.style.left = newX + 'px';
+    button.style.top = newY + 'px';
+}
 
 
         function sayYes() {
@@ -230,5 +237,6 @@
     </script>
 </body>
 </html> 
+
 
 
