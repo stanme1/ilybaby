@@ -193,8 +193,8 @@
             const viewportHeight = window.innerHeight;
             
             // Calculate new random position within viewport bounds
-            const newX = Math.random() * (viewportWidth - 30); // 150px buffer for button width
-            const newY = Math.random() * (viewportHeight - 20);  // 50px buffer for button height
+            const newX = Math.random() * (viewportWidth - 50); // 150px buffer for button width
+            const newY = Math.random() * (viewportHeight - 50);  // 50px buffer for button height
             
             button.style.position = 'fixed'; // Change to fixed positioning
             button.style.left = newX + 'px';
@@ -219,7 +219,7 @@
                     flower.className = 'flower';
                     flower.style.left = Math.random() * 100 + 'vw';
                     flower.style.animationDuration = Math.random() * 3 + 2 + 's';
-                    flower.innerHTML = '🌺💐🌷🌸🌹';
+                    flower.innerHTML = '🌺', '💐', '🌷', '🌸', '🌹';
                     document.getElementById('flowers').appendChild(flower);
                 }, i * 100);
             }
@@ -230,6 +230,7 @@
     </script>
 </body>
 </html> 
+
 
 
 
