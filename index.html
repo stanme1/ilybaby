@@ -176,6 +176,14 @@
             color: transparent;
             font-weight: bold;
         }
+
+        body.answered #action-buttons,
+        body.answered .btn-yes,
+        body.answered .btn-no {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -194,12 +202,49 @@
         <div class="question" style="animation-delay: 1s;">
             Gusto ko talagang ligawan ka, kahit malayo tayo sa isa’t isa. Okay lang ba sa’yo?
         </div>
-        <button class="btn btn-yes" onclick="sayYes()">Yes</button>
-        <button class="btn btn-no" id="btn-no">No</button>
+        <div id="action-buttons">
+            <button type="button" class="btn btn-yes" id="btn-yes" onclick="sayYes()">Yes</button>
+            <button type="button" class="btn btn-no" id="btn-no">No</button>
+        </div>
         <p id="response"></p>
     </div>
 
     <script>
+        window.answered = false;
+
+        function hideButtons() {
+            document.body.classList.add('answered');
+            document.querySelectorAll('#action-buttons, #btn-yes, #btn-no').forEach(function (el) {
+                el.remove();
+            });
+        }
+
+        function sayYes() {
+            if (window.answered) return;
+            window.answered = true;
+            hideButtons();
+
+            const response = document.getElementById('response');
+            response.style.display = 'block';
+            response.innerHTML =
+                '<div style="animation: fadeIn 1s ease;">' +
+                    'Thank you, Kay! That means so much to me. I promise to pursue you sincerely and in the way you deserve, to make you feel valued, appreciated, and loved. &lt;3 <br>' +
+                    '<span style="font-size: 40px;"> 🌹💖🌹 </span>' +
+                '</div>';
+
+            const flowers = ['🌸', '🌺', '🌹', '💐', '🌷'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(function () {
+                    const flower = document.createElement('div');
+                    flower.className = 'flower';
+                    flower.style.left = Math.random() * 100 + 'vw';
+                    flower.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    flower.innerHTML = flowers[Math.floor(Math.random() * flowers.length)];
+                    document.getElementById('flowers').appendChild(flower);
+                }, i * 100);
+            }
+        }
+
         // Create falling flower petals
         function createFlowers() {
             const flowers = ['🌸', '🌺', '🌹', '💐', '🌷'];
@@ -271,43 +316,22 @@
 
         const btnNo = document.getElementById('btn-no');
 
-        btnNo.addEventListener('mouseenter', () => moveButton(btnNo));
+        btnNo.addEventListener('mouseenter', function () {
+            if (!window.answered) moveButton(btnNo);
+        });
 
-        btnNo.addEventListener('touchstart', (e) => {
+        btnNo.addEventListener('touchstart', function (e) {
+            if (window.answered) return;
             e.preventDefault();
             moveButton(btnNo);
         }, { passive: false });
 
         if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', () => {
-                if (btnNo.classList.contains('evasive')) {
+            window.visualViewport.addEventListener('resize', function () {
+                if (!window.answered && btnNo.classList.contains('evasive')) {
                     moveButton(btnNo);
                 }
             });
-        }
-
-
-        function sayYes() {
-            const response = document.getElementById('response');
-            response.style.display = 'block';
-            response.innerHTML = `
-                <div style="animation: fadeIn 1s ease;">
-                    Thank you, Kay! That means so much to me. I promise to pursue you sincerely and in the way you deserve, to make you feel valued, appreciated, and loved. <3 <br>
-                    <span style="font-size: 40px;"> 🌹💖🌹 </span>
-                </div>
-            `;
-            
-            // Celebration effect
-            for(let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const flower = document.createElement('div');
-                    flower.className = 'flower';
-                    flower.style.left = Math.random() * 100 + 'vw';
-                    flower.style.animationDuration = Math.random() * 3 + 2 + 's';
-                    flower.innerHTML = '🌺', '💐', '🌷', '🌸', '🌹';
-                    document.getElementById('flowers').appendChild(flower);
-                }, i * 100);
-            }
         }
 
         // Start falling flowers when page loads
