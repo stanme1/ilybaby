@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>my baby boss</title>
+    <title>This is it, bebe</title>
     <style>
-        html, body {
-            overflow: hidden;
+        html {
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         body {
@@ -18,7 +19,9 @@
             animation: gradientBG 15s ease infinite;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            padding: 24px 0 40px;
+            box-sizing: border-box;
         }
 
         @keyframes gradientBG {
@@ -36,8 +39,8 @@
             max-width: 600px;
             width: 90%;
             text-align: center;
-            transform: translateY(0);
             animation: float 6s ease-in-out infinite;
+            flex-shrink: 0;
         }
 
         @keyframes float {
@@ -119,6 +122,23 @@
             position: fixed;
             margin: 0;
             z-index: 1000;
+            transform: none;
+        }
+
+        @media (max-width: 600px) {
+            .question {
+                font-size: 18px;
+                margin: 16px 0;
+            }
+
+            .container {
+                padding: 24px 18px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
         }
 
         .flowers {
@@ -164,10 +184,10 @@
     <div class="container">
         <div class="heart">❤️</div>
         <div class="question">
-            hii <span class="special-text">baby</span>,
+            Haiii, <span class="special-text">Baby</span>,
         </div>
         <div class="question" style="animation-delay: 0.5s;">
-           baby, gusto ko lang malaman mo na sure ako sa’yo, at seryoso talaga ako sa nararamdaman ko. I’m willing to take the risk kahit hindi sigurado ang lahat. Gusto kong ipakita sa’yo na hindi lahat umaalis and that not all love fades or gives up.
+           Kay, gusto ko lang malaman mo na sure ako sa’yo, at seryoso talaga ako sa nararamdaman ko. I’m willing to take the risk kahit hindi sigurado ang lahat. Gusto kong ipakita sa’yo na hindi lahat umaalis and that not all love fades or gives up.
            I’ll stay sa good days at sa bad days, at kahit sa mga panahong pakiramdam mo mag-isa ka lang. I may not always be good with words, pero I promise makikinig ako sa lahat ng nararamdaman mo, kahit yung mga hirap mong sabihin.
             I'm here to stay, to be your safe place, and to remind you that some hearts are meant to last. I really admire and appreciate you, at kahit may distance, hindi yun magbabago. If you give me the chance, I’d love to show you just how much you mean to me.
         </div>
@@ -200,21 +220,53 @@
             }, 300);
         }
 
+        function getViewportBounds() {
+            const vp = window.visualViewport;
+            if (vp) {
+                return {
+                    left: vp.offsetLeft,
+                    top: vp.offsetTop,
+                    width: vp.width,
+                    height: vp.height
+                };
+            }
+            return {
+                left: 0,
+                top: 0,
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        }
+
         function moveButton(button) {
+            // Move out of .container so fixed positioning uses the screen, not the animated card
+            if (button.parentElement !== document.body) {
+                document.body.appendChild(button);
+            }
+
             button.classList.add('evasive');
+            button.style.position = 'fixed';
+            button.style.margin = '0';
+            button.style.transform = 'none';
+            button.style.right = 'auto';
+            button.style.bottom = 'auto';
 
             const rect = button.getBoundingClientRect();
-            const padding = 12;
-            const minX = padding;
-            const minY = padding;
-            const maxX = Math.max(minX, window.innerWidth - rect.width - padding);
-            const maxY = Math.max(minY, window.innerHeight - rect.height - padding);
+            const btnW = rect.width;
+            const btnH = rect.height;
+            const padding = 16;
+            const view = getViewportBounds();
 
-            const newX = minX + Math.random() * (maxX - minX);
-            const newY = minY + Math.random() * (maxY - minY);
+            const minX = view.left + padding;
+            const minY = view.top + padding;
+            const maxX = view.left + view.width - btnW - padding;
+            const maxY = view.top + view.height - btnH - padding;
 
-            button.style.left = newX + 'px';
-            button.style.top = newY + 'px';
+            const newX = minX + Math.random() * Math.max(0, maxX - minX);
+            const newY = minY + Math.random() * Math.max(0, maxY - minY);
+
+            button.style.left = Math.min(Math.max(newX, minX), maxX) + 'px';
+            button.style.top = Math.min(Math.max(newY, minY), maxY) + 'px';
         }
 
         const btnNo = document.getElementById('btn-no');
@@ -225,6 +277,14 @@
             e.preventDefault();
             moveButton(btnNo);
         }, { passive: false });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                if (btnNo.classList.contains('evasive')) {
+                    moveButton(btnNo);
+                }
+            });
+        }
 
 
         function sayYes() {
